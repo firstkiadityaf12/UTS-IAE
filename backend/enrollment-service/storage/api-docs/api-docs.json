@@ -1,0 +1,202 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Enrollment API Documentation",
+      "description": "API Documentation for Enrollment Microservice",
+      "version": "1.0.0"
+    },
+    "paths": {
+      "/enrollments": {
+        "get": {
+          "tags": ["Enrollments"],
+          "summary": "Get list of enrollments",
+          "operationId": "getEnrollments",
+          "responses": {
+            "200": {
+              "description": "Successful operation",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/Enrollment"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": ["Enrollments"],
+          "summary": "Create a new enrollment",
+          "operationId": "createEnrollment",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "required": ["id_student", "id_teacher", "id_course", "status"],
+                  "properties": {
+                    "id_student": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "id_teacher": {
+                      "type": "integer",
+                      "example": 2
+                    },
+                    "id_course": {
+                      "type": "integer",
+                      "example": 3
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": ["enroll", "tidak"],
+                      "example": "enroll"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Enrollment created successfully"
+            },
+            "422": {
+              "description": "Validation errors"
+            }
+          }
+        }
+      },
+      "/enrollments/{id}": {
+        "get": {
+          "tags": ["Enrollments"],
+          "summary": "Get enrollment by ID",
+          "operationId": "getEnrollmentById",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful operation"
+            },
+            "404": {
+              "description": "Enrollment not found"
+            }
+          }
+        },
+        "put": {
+          "tags": ["Enrollments"],
+          "summary": "Update enrollment by ID",
+          "operationId": "updateEnrollmentById",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Enrollment"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Enrollment updated successfully"
+            },
+            "404": {
+              "description": "Enrollment not found"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["Enrollments"],
+          "summary": "Delete enrollment by ID",
+          "operationId": "deleteEnrollmentById",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Enrollment deleted successfully"
+            },
+            "404": {
+              "description": "Enrollment not found"
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "Enrollment": {
+          "type": "object",
+          "required": ["id_student", "id_teacher", "id_course", "status"],
+          "properties": {
+            "id_enroll": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "id_student": {
+              "type": "integer",
+              "example": 1
+            },
+            "id_teacher": {
+              "type": "integer",
+              "example": 2
+            },
+            "id_course": {
+              "type": "integer",
+              "example": 3
+            },
+            "status": {
+              "type": "string",
+              "enum": ["enroll", "tidak"],
+              "example": "enroll"
+            },
+            "created_at": {
+              "type": "string",
+              "format": "datetime"
+            },
+            "updated_at": {
+              "type": "string",
+              "format": "datetime"
+            }
+          }
+        }
+      }
+    },
+    "tags": [
+      {
+        "name": "Enrollments",
+        "description": "Operations related to enrollments"
+      }
+    ]
+  }
+  
