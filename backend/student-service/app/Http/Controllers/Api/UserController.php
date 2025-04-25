@@ -10,14 +10,12 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
-    // Menampilkan semua user
     public function index()
     {
         $users = User::all();
         return response()->json($users);
     }
 
-    // Menyimpan user baru
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -45,7 +43,6 @@ class UserController extends Controller
         return response()->json($user, 201);
     }
 
-    // Menampilkan detail user berdasarkan ID
     public function show($id)
     {
         $user = User::find($id);
@@ -55,7 +52,6 @@ class UserController extends Controller
         return response()->json($user);
     }
 
-    // Mengupdate data user
     public function update(Request $request, $id)
     {
         $user = User::find($id);
@@ -88,7 +84,6 @@ class UserController extends Controller
         return response()->json($user);
     }
 
-    // Menghapus user
     public function destroy($id)
     {
         $user = User::find($id);

@@ -1,14 +1,17 @@
 <div id="layoutSidenav_nav">
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-white">
         <!-- Navbar Brand-->
-        <a class="navbar-brand ps-3" href="#">
-            <img src="{{ asset('assets/logo.png') }}" alt="Logo" style="height: 47px;">
+        <a class="navbar-brand ps-3 d-flex align-items-center" href="#">
+            <img src="{{ asset('assets/logo.png') }}" alt="Logo" class="img-fluid" style="max-height: 65px; width: auto;">
         </a>
 
+        <!-- Course Menu -->
+        <div class="d-none d-md-inline-block ms-3">
+            <a href="#" class="text-dark text-decoration-none"></a>
+        </div>
 
         <!-- Sidebar Toggle -->
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-lg-0" id="sidebarToggle"><i class="fas fa-bars" style="color: #92949E; font-size: 1.3rem;"></i></button>
-
 
         <!-- Navbar-->
         <ul class="navbar-nav ms-auto me-3 me-lg-4">
