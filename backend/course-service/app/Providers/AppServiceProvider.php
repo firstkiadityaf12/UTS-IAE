@@ -1,13 +1,13 @@
 <?php
 
-namespace {{ namespace }};
+namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
-class {{ class }} extends ServiceProvider
+class AppServiceProvider extends ServiceProvider
 {
     /**
-     * Register services.
+     * Register any application services.
      */
     public function register(): void
     {
@@ -15,7 +15,7 @@ class {{ class }} extends ServiceProvider
     }
 
     /**
-     * Bootstrap services.
+     * Bootstrap any application services.
      */
     public function boot(): void
     {
