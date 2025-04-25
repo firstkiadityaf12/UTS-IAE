@@ -11,58 +11,51 @@ class EnrollmentController extends Controller
     public function index()
     {
         $enrollments = Enrollment::all();
-        return view('enrollments.index', compact('enrollments'));
+        return response()->json($enrollments);
     }
 
-    // Tampilkan form untuk membuat enrollment baru
-    public function create()
-    {
-        return view('enrollments.create');
-    }
-
-    // Simpan data enrollment baru ke database
+    // Simpan data enrollment baru
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'id_student' => 'required|exists:students,id',
             'id_teacher' => 'required|exists:teachers,id',
             'id_course'  => 'required|exists:courses,id',
             'status'     => 'required|in:enroll,tidak'
         ]);
 
-        Enrollment::create($request->all());
+        $enrollment = Enrollment::create($validated);
 
-        return redirect()->route('enrollments.index')->with('success', 'Enrollment berhasil ditambahkan');
+        return response()->json([
+            'message' => 'Enrollment berhasil ditambahkan',
+            'data' => $enrollment
+        ], 201);
     }
 
     // Tampilkan detail dari satu enrollment
     public function show($id)
     {
         $enrollment = Enrollment::findOrFail($id);
-        return view('enrollments.show', compact('enrollment'));
-    }
-
-    // Tampilkan form edit enrollment
-    public function edit($id)
-    {
-        $enrollment = Enrollment::findOrFail($id);
-        return view('enrollments.edit', compact('enrollment'));
+        return response()->json($enrollment);
     }
 
     // Update data enrollment
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'id_student' => 'required|exists:students,id',
-            'id_teacher' => 'required|exists:teachers,id',
-            'id_course'  => 'required|exists:courses,id',
-            'status'     => 'required|in:enroll,tidak'
+        $validated = $request->validate([
+            'id_student' => 'sometimes|required|exists:students,id',
+            'id_teacher' => 'sometimes|required|exists:teachers,id',
+            'id_course'  => 'sometimes|required|exists:courses,id',
+            'status'     => 'sometimes|required|in:enroll,tidak'
         ]);
 
         $enrollment = Enrollment::findOrFail($id);
-        $enrollment->update($request->all());
+        $enrollment->update($validated);
 
-        return redirect()->route('enrollments.index')->with('success', 'Enrollment berhasil diperbarui');
+        return response()->json([
+            'message' => 'Enrollment berhasil diperbarui',
+            'data' => $enrollment
+        ]);
     }
 
     // Hapus enrollment
@@ -71,6 +64,6 @@ class EnrollmentController extends Controller
         $enrollment = Enrollment::findOrFail($id);
         $enrollment->delete();
 
-        return redirect()->route('enrollments.index')->with('success', 'Enrollment berhasil dihapus');
+        return response()->json(null, 204);
     }
 }
