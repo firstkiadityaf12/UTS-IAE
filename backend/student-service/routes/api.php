@@ -9,4 +9,6 @@ Route::get('/check', function () {
     return response()->json(['message' => 'API is working']);
 });
 
-Route::apiResource('users', UserController::class);
+Route::prefix('v1')->group(function () {
+    Route::apiResource('users', UserController::class);
+});

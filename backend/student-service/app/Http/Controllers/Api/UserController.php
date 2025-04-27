@@ -8,9 +8,55 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
+/**
+    * @OA\Info(
+    *      version="1.0.0",
+    *      title="Dokumentasi API",
+    *      description="Lorem Ipsum",
+    *      @OA\Contact(
+    *          email="hi.wasissubekti02@gmail.com"
+    *      ),
+    *      @OA\License(
+    *          name="Apache 2.0",
+    *          url="http://www.apache.org/licenses/LICENSE-2.0.html"
+    *      )
+    * )
+    *
+    * @OA\Server(
+    *      url=L5_SWAGGER_CONST_HOST,
+    *      description="Demo API Server"
+    * )
+    */
+
+/**
+ * @OA\Schema(
+ *     schema="User",
+ *     type="object",
+ *     required={"nama", "gmail", "no_telp", "alamat", "username", "password"},
+ *     @OA\Property(property="id", type="integer"),
+ *     @OA\Property(property="nama", type="string"),
+ *     @OA\Property(property="gmail", type="string"),
+ *     @OA\Property(property="no_telp", type="string"),
+ *     @OA\Property(property="alamat", type="string"),
+ *     @OA\Property(property="username", type="string"),
+ *     @OA\Property(property="password", type="string"),
+ * )
+ */
+
 class UserController extends Controller
 {
     // Menampilkan semua user
+    /**
+     * @OA\Get(
+     *     path="/v1/users",
+     *     summary="Get all users",
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of users",
+     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/User"))
+     *     )
+     * )
+     */
     public function index()
     {
         $users = User::all();
@@ -18,6 +64,21 @@ class UserController extends Controller
     }
 
     // Menyimpan user baru
+    /**
+     * @OA\Post(
+     *     path="/v1/users",
+     *     summary="Create new user",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/User")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="User created successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/User")
+     *     )
+     * )
+     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -46,6 +107,28 @@ class UserController extends Controller
     }
 
     // Menampilkan detail user berdasarkan ID
+    /**
+     * @OA\Get(
+     *     path="/v1/users/{id}",
+     *     summary="Get user by ID",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID of user",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="User details",
+     *         @OA\JsonContent(ref="#/components/schemas/User")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="User not found"
+     *     )
+     * )
+     */
     public function show($id)
     {
         $user = User::find($id);
@@ -56,6 +139,32 @@ class UserController extends Controller
     }
 
     // Mengupdate data user
+    /**
+     * @OA\Put(
+     *     path="/v1/users/{id}",
+     *     summary="Update user by ID",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID of user",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/User")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="User updated successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/User")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="User not found"
+     *     )
+     * )
+     */
     public function update(Request $request, $id)
     {
         $user = User::find($id);
@@ -89,6 +198,27 @@ class UserController extends Controller
     }
 
     // Menghapus user
+    /**
+     * @OA\Delete(
+     *     path="/v1/users/{id}",
+     *     summary="Delete user by ID",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID of user",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="User deleted successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="User not found"
+     *     )
+     * )
+     */
     public function destroy($id)
     {
         $user = User::find($id);
