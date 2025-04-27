@@ -7,12 +7,33 @@ use Illuminate\Http\Request;
 
 class CourseController extends Controller
 {
+/**
+ * @OA\Get(
+ *     path="/api/courses",
+ *     summary="Ambil semua courses",
+ *     tags={"Course"},
+ *     @OA\Response(
+ *         response=200,
+ *         description="Sukses mengambil courses"
+ *     )
+ * )
+ */
     public function index()
     {
         $courses = Course::all();
         return response()->json($courses);
     }
-
+/**
+ * @OA\Post(
+ *     path="/api/courses",
+ *     summary="Tambah course",
+ *     tags={"Course"},
+ *     @OA\Response(
+ *         response=200,
+ *         description="Sukses tambah course"
+ *     )
+ * )
+ */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -27,13 +48,55 @@ class CourseController extends Controller
         $course = Course::create($validated);
         return response()->json($course, 201);
     }
-
+/**
+ * @OA\Get(
+ *     path="/api/courses/{id}",
+ *     summary="Ambil satu course berdasarkan ID",
+ *     tags={"Course"},
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="ID dari course",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Sukses mengambil course"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Course tidak ditemukan"
+ *     )
+ * )
+ */
     public function show($id)
     {
         $course = Course::findOrFail($id);
         return response()->json($course);
     }
-
+/**
+ * @OA\Put(
+ *     path="/api/courses/{id}",
+ *     summary="Update course berdasarkan ID",
+ *     tags={"Course"},
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="ID dari course yang mau diupdate",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Sukses update course"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Course tidak ditemukan"
+ *     )
+ * )
+ */
     public function update(Request $request, $id)
     {
         $course = Course::findOrFail($id);
@@ -50,7 +113,28 @@ class CourseController extends Controller
         $course->update($validated);
         return response()->json($course);
     }
-
+/**
+ * @OA\Delete(
+ *     path="/api/courses/{id}",
+ *     summary="Hapus course berdasarkan ID",
+ *     tags={"Course"},
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="ID dari course yang mau dihapus",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(
+ *         response=204,
+ *         description="Sukses hapus course"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Course tidak ditemukan"
+ *     )
+ * )
+ */
     public function destroy($id)
     {
         $course = Course::findOrFail($id);
