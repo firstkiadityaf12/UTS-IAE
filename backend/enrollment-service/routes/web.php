@@ -14,3 +14,4 @@ Route::prefix('api')->group(function () {
     Route::put('/enrollments/{id}', [EnrollmentController::class, 'update']);
     Route::delete('/enrollments/{id}', [EnrollmentController::class, 'destroy']);
 });
+

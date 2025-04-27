@@ -9,5 +9,6 @@ Route::get('/check', function () {
     return response()->json(['message' => 'API is working']);
 });
 
+
 Route::apiResource('enrollments', EnrollmentController::class);
 
