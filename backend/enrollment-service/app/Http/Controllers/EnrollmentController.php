@@ -6,36 +6,50 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use App\Models\Enrollment;
 
-
 /**
  * @OA\Info(
  *     title="Enrollment API Documentation",
  *     version="1.0.0",
- *     description="API Documentation for Enrollment"
+ *     description="API Documentation for Enrollment",
+ *     @OA\Contact(
+ *         email="support@example.com"
+ *     )
+ * )
+ * 
+ * @OA\Server(
+ *     url="http://127.0.0.1:8005/api",
+ *     description="Local server"
+ * )
+ * 
+ * @OA\SecurityScheme(
+ *     securityScheme="bearerAuth",
+ *     type="http",
+ *     scheme="bearer",
+ *     bearerFormat="JWT",
+ *     description="Enter your Bearer token in the format **Bearer {token}**"
  * )
  * 
  * @OA\Schema(
  *     schema="Enrollment",
  *     required={"id_student", "id_teacher", "id_course", "status"},
- *     @OA\Property(property="id", type="integer", format="int64"),
+ *     @OA\Property(property="id", type="integer", format="int64", example=1),
  *     @OA\Property(property="id_student", type="integer", example=1),
  *     @OA\Property(property="id_teacher", type="integer", example=1),
  *     @OA\Property(property="id_course", type="integer", example=1),
- *     @OA\Property(property="status", type="string", enum={"enroll", "tidak"}),
- *     @OA\Property(property="created_at", type="string", format="datetime"),
- *     @OA\Property(property="updated_at", type="string", format="datetime"),
- *     @OA\Property(property="deleted_at", type="string", format="datetime", nullable=true)
+ *     @OA\Property(property="status", type="string", enum={"enroll", "tidak"}, example="enroll"),
+ *     @OA\Property(property="created_at", type="string", format="date-time", example="2023-10-01T12:00:00Z"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time", example="2023-10-01T12:00:00Z"),
+ *     @OA\Property(property="deleted_at", type="string", format="date-time", nullable=true)
  * )
  */
-
-
 class EnrollmentController extends Controller
 {
     /**
      * @OA\Get(
-     *     path="/api/enrollments",
+     *     path="/enrollments",
      *     tags={"Enrollments"},
      *     summary="Get list of enrollments",
+     *     description="Retrieve a list of all enrollments",
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
@@ -53,12 +67,12 @@ class EnrollmentController extends Controller
         return response()->json($enrollments);
     }
 
-
     /**
      * @OA\Post(
-     *     path="/api/enrollments",
+     *     path="/enrollments",
      *     tags={"Enrollments"},
      *     summary="Create a new enrollment",
+     *     description="Create a new enrollment record by validating student, teacher, and course from external services",
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
@@ -66,7 +80,7 @@ class EnrollmentController extends Controller
      *             @OA\Property(property="id_student", type="integer", example=1),
      *             @OA\Property(property="id_teacher", type="integer", example=1),
      *             @OA\Property(property="id_course", type="integer", example=1),
-     *             @OA\Property(property="status", type="string", enum={"enroll", "tidak"})
+     *             @OA\Property(property="status", type="string", enum={"enroll", "tidak"}, example="enroll")
      *         )
      *     ),
      *     @OA\Response(
@@ -78,10 +92,25 @@ class EnrollmentController extends Controller
      *         )
      *     ),
      *     @OA\Response(
+     *         response=404,
+     *         description="Resource not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Student tidak ditemukan")
+     *         )
+     *     ),
+     *     @OA\Response(
      *         response=422,
      *         description="Validation errors",
      *         @OA\JsonContent(
      *             @OA\Property(property="message", type="string", example="The id_student field is required.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Terjadi kesalahan saat memproses enrollment"),
+     *             @OA\Property(property="error", type="string", example="cURL error 7: Failed to connect to server")
      *         )
      *     ),
      *     security={{"bearerAuth":{}}}
@@ -132,9 +161,10 @@ class EnrollmentController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/enrollments/{id}",
+     *     path="/enrollments/{id}",
      *     tags={"Enrollments"},
      *     summary="Get enrollment by ID",
+     *     description="Retrieve a single enrollment by its ID",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -165,9 +195,10 @@ class EnrollmentController extends Controller
 
     /**
      * @OA\Put(
-     *     path="/api/enrollments/{id}",
+     *     path="/enrollments/{id}",
      *     tags={"Enrollments"},
      *     summary="Update enrollment by ID",
+     *     description="Update an existing enrollment by its ID",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -181,7 +212,7 @@ class EnrollmentController extends Controller
      *             @OA\Property(property="id_student", type="integer", example=1),
      *             @OA\Property(property="id_teacher", type="integer", example=1),
      *             @OA\Property(property="id_course", type="integer", example=1),
-     *             @OA\Property(property="status", type="string", enum={"enroll", "tidak"})
+     *             @OA\Property(property="status", type="string", enum={"enroll", "tidak"}, example="enroll")
      *         )
      *     ),
      *     @OA\Response(
@@ -229,13 +260,14 @@ class EnrollmentController extends Controller
 
     /**
      * @OA\Delete(
-     *     path="/api/enrollments/{id}",
+     *     path="/enrollments/{id}",
      *     tags={"Enrollments"},
      *     summary="Delete enrollment by ID",
+     *     description="Delete an enrollment by its ID",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
-     *         required=true,
+         *         required=true,
      *         description="Enrollment ID",
      *         @OA\Schema(type="integer")
      *     ),
