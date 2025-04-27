@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use App\Models\Enrollment;
+
 
 /**
  * @OA\Info(
@@ -25,6 +27,7 @@ use App\Models\Enrollment;
  *     @OA\Property(property="deleted_at", type="string", format="datetime", nullable=true)
  * )
  */
+
 
 class EnrollmentController extends Controller
 {
@@ -49,6 +52,7 @@ class EnrollmentController extends Controller
         $enrollments = Enrollment::all();
         return response()->json($enrollments);
     }
+
 
     /**
      * @OA\Post(
@@ -85,19 +89,45 @@ class EnrollmentController extends Controller
      */
     public function store(Request $request)
     {
+        // Validasi input
         $validated = $request->validate([
-            'id_student' => 'required|exists:students,id',
-            'id_teacher' => 'required|exists:teachers,id',
-            'id_course'  => 'required|exists:courses,id',
-            'status'     => 'required|in:enroll,tidak'
+            'id_student' => 'required',
+            'id_teacher' => 'required',
+            'id_course'  => 'required',
+            'status'     => 'required|in:enroll,tidak',
         ]);
 
-        $enrollment = Enrollment::create($validated);
+        try {
+            // Validasi id_student dari Student Service
+            $studentResponse = Http::get("http://127.0.0.1:8001/api/users{$validated['id_student']}");
+            if ($studentResponse->failed()) {
+                return response()->json(['message' => 'Student tidak ditemukan'], 404);
+            }
 
-        return response()->json([
-            'message' => 'Enrollment berhasil ditambahkan',
-            'data' => $enrollment
-        ], 201);
+            // Validasi id_teacher dari Teacher Service
+            $teacherResponse = Http::get("http://127.0.0.1:8000/api/teacher{$validated['id_teacher']}");
+            if ($teacherResponse->failed()) {
+                return response()->json(['message' => 'Teacher tidak ditemukan'], 404);
+            }
+
+            // Validasi id_course dari Course Service
+            $courseResponse = Http::get("http://127.0.0.1:8003/api/courses{$validated['id_course']}");
+            if ($courseResponse->failed()) {
+                return response()->json(['message' => 'Course tidak ditemukan'], 404);
+            }
+
+            // Simpan enrollment di database
+            $enrollment = Enrollment::create($validated);
+            return response()->json([
+                'message' => 'Enrollment berhasil ditambahkan',
+                'data' => $enrollment,
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Terjadi kesalahan saat memproses enrollment',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
