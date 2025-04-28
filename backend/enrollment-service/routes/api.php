@@ -10,5 +10,6 @@ Route::get('/check', function () {
 });
 
 
+Route::get('/enrollments/course/{courseId}', [EnrollmentController::class, 'getByCourseId']);
 Route::apiResource('enrollments', EnrollmentController::class);
 

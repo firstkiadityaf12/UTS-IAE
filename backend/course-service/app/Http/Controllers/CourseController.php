@@ -9,7 +9,7 @@ class CourseController extends Controller
 {
 /**
  * @OA\Get(
- *     path="/api/courses",
+ *     path="/api/v1/courses",
  *     summary="Ambil semua courses",
  *     tags={"Course"},
  *     @OA\Response(
@@ -25,7 +25,7 @@ class CourseController extends Controller
     }
 /**
  * @OA\Post(
- *     path="/api/courses",
+ *     path="/api/v1/courses",
  *     summary="Tambah course",
  *     tags={"Course"},
  *     @OA\Response(
@@ -50,7 +50,7 @@ class CourseController extends Controller
     }
 /**
  * @OA\Get(
- *     path="/api/courses/{id}",
+ *     path="/api/v1/courses/{id}",
  *     summary="Ambil satu course berdasarkan ID",
  *     tags={"Course"},
  *     @OA\Parameter(
@@ -77,7 +77,7 @@ class CourseController extends Controller
     }
 /**
  * @OA\Put(
- *     path="/api/courses/{id}",
+ *     path="/api/v1/courses/{id}",
  *     summary="Update course berdasarkan ID",
  *     tags={"Course"},
  *     @OA\Parameter(
@@ -115,7 +115,7 @@ class CourseController extends Controller
     }
 /**
  * @OA\Delete(
- *     path="/api/courses/{id}",
+ *     path="/api/v1/courses/{id}",
  *     summary="Hapus course berdasarkan ID",
  *     tags={"Course"},
  *     @OA\Parameter(

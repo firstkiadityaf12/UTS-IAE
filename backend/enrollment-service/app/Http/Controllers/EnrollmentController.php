@@ -120,30 +120,33 @@ class EnrollmentController extends Controller
     {
         // Validasi input
         $validated = $request->validate([
-            'id_student' => 'required',
-            'id_teacher' => 'required',
-            'id_course'  => 'required',
+            'id_student' => 'required|integer',
+            'id_teacher' => 'required|integer',
+            'id_course'  => 'required|integer',
             'status'     => 'required|in:enroll,tidak',
         ]);
 
         try {
             // Validasi id_student dari Student Service
-            $studentResponse = Http::get("http://127.0.0.1:8001/api/users{$validated['id_student']}");
+            $studentResponse = Http::get("http://127.0.0.1:8003/api/v1/users/{$validated['id_student']}");
             if ($studentResponse->failed()) {
                 return response()->json(['message' => 'Student tidak ditemukan'], 404);
             }
 
             // Validasi id_teacher dari Teacher Service
-            $teacherResponse = Http::get("http://127.0.0.1:8000/api/teacher{$validated['id_teacher']}");
+            $teacherResponse = Http::get("http://127.0.0.1:8004/api/v1/teacher/{$validated['id_teacher']}");
             if ($teacherResponse->failed()) {
                 return response()->json(['message' => 'Teacher tidak ditemukan'], 404);
             }
 
             // Validasi id_course dari Course Service
-            $courseResponse = Http::get("http://127.0.0.1:8003/api/courses{$validated['id_course']}");
+            $courseResponse = Http::get("http://127.0.0.1:8001/api/courses/{$validated['id_course']}");
             if ($courseResponse->failed()) {
                 return response()->json(['message' => 'Course tidak ditemukan'], 404);
             }
+
+            // Simpan enrollment di database
+            $enrollment = Enrollment::create($validated);
 
             // Simpan enrollment di database
             $enrollment = Enrollment::create($validated);
@@ -242,20 +245,71 @@ class EnrollmentController extends Controller
      */
     public function update(Request $request, $id)
     {
+        // Validasi input
         $validated = $request->validate([
-            'id_student' => 'sometimes|required|exists:students,id',
-            'id_teacher' => 'sometimes|required|exists:teachers,id',
-            'id_course'  => 'sometimes|required|exists:courses,id',
-            'status'     => 'sometimes|required|in:enroll,tidak'
+            'id_student' => 'sometimes|required|integer',
+            'id_teacher' => 'sometimes|required|integer',
+            'id_course'  => 'sometimes|required|integer',
+            'status'     => 'sometimes|required|in:enroll,tidak',
         ]);
 
-        $enrollment = Enrollment::findOrFail($id);
-        $enrollment->update($validated);
+        try {
+            // Validasi data jika ada perubahan
+            if (isset($validated['id_student'])) {
+                $studentResponse = Http::retry(3, 100)->get(config('services.student.url') . "/api/users/{$validated['id_student']}");
+                if ($studentResponse->failed()) {
+                    return response()->json(['message' => 'Student tidak ditemukan'], 404);
+                }
+            }
 
-        return response()->json([
-            'message' => 'Enrollment berhasil diperbarui',
-            'data' => $enrollment
-        ]);
+            if (isset($validated['id_teacher'])) {
+                $teacherResponse = Http::retry(3, 100)->get(config('services.teacher.url') . "/api/teachers/{$validated['id_teacher']}");
+                if ($teacherResponse->failed()) {
+                    return response()->json(['message' => 'Teacher tidak ditemukan'], 404);
+                }
+            }
+
+            if (isset($validated['id_course'])) {
+                $courseResponse = Http::retry(3, 100)->get(config('services.course.url') . "/api/courses/{$validated['id_course']}");
+                if ($courseResponse->failed()) {
+                    return response()->json(['message' => 'Course tidak ditemukan'], 404);
+                }
+            }
+
+            // Update enrollment
+            $enrollment = Enrollment::findOrFail($id);
+            $enrollment->update($validated);
+
+            // Simpan event jika id_student atau id_course berubah
+            if (isset($validated['id_student']) || isset($validated['id_course'])) {
+                \App\Models\Event::create([
+                    'name' => 'StudentEnrolled',
+                    'payload' => json_encode([
+                        'student_id' => $validated['id_student'] ?? $enrollment->id_student,
+                        'course_id' => $validated['id_course'] ?? $enrollment->id_course,
+                    ]),
+                    'status' => 'pending',
+                ]);
+
+                \App\Models\Event::create([
+                    'name' => 'CourseEnrollmentUpdated',
+                    'payload' => json_encode([
+                        'course_id' => $validated['id_course'] ?? $enrollment->id_course,
+                    ]),
+                    'status' => 'pending',
+                ]);
+            }
+
+            return response()->json([
+                'message' => 'Enrollment berhasil diperbarui',
+                'data' => $enrollment,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Terjadi kesalahan saat memproses pembaruan',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -291,5 +345,61 @@ class EnrollmentController extends Controller
         $enrollment->delete();
 
         return response()->json(null, 204);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/enrollments/course/{courseId}",
+     *     tags={"Enrollments"},
+     *     summary="Get enrollments by course ID",
+     *     description="Retrieve all enrollments for a specific course",
+     *     @OA\Parameter(
+     *         name="courseId",
+     *         in="path",
+     *         required=true,
+     *         description="Course ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/Enrollment")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="No enrollments found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="No enrollments found for this course")
+     *         )
+     *     ),
+     *     security={{"bearerAuth":{}}}
+     * )
+     */
+    public function getByCourseId($courseId)
+    {
+        try {
+            // Validasi course dari Course Service
+            $courseResponse = Http::retry(3, 100)->get(config('services.course.url') . "/api/courses/{$courseId}");
+            if ($courseResponse->failed()) {
+                return response()->json(['message' => 'Course tidak ditemukan'], 404);
+            }
+
+            // Ambil enrollment berdasarkan course_id
+            $enrollments = Enrollment::where('id_course', $courseId)->get();
+
+            if ($enrollments->isEmpty()) {
+                return response()->json(['message' => 'No enrollments found for this course'], 404);
+            }
+
+            return response()->json($enrollments);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Terjadi kesalahan saat mengambil data enrollment',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }
