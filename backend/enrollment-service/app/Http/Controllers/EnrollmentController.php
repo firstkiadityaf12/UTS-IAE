@@ -256,21 +256,21 @@ class EnrollmentController extends Controller
         try {
             // Validasi data jika ada perubahan
             if (isset($validated['id_student'])) {
-                $studentResponse = Http::retry(3, 100)->get(config('services.student.url') . "/api/v1/users/{$validated['id_student']}");
+                $studentResponse = Http::get("http://127.0.0.1:8003/api/v1/users/{$validated['id_student']}");
                 if ($studentResponse->failed()) {
                     return response()->json(['message' => 'Student tidak ditemukan'], 404);
                 }
             }
 
             if (isset($validated['id_teacher'])) {
-                $teacherResponse = Http::retry(3, 100)->get(config('services.teacher.url') . "/api/v1/teachers/{$validated['id_teacher']}");
+                $teacherResponse = Http::get("http://127.0.0.1:8004/api/v1/teacher/{$validated['id_teacher']}");
                 if ($teacherResponse->failed()) {
                     return response()->json(['message' => 'Teacher tidak ditemukan'], 404);
                 }
             }
 
             if (isset($validated['id_course'])) {
-                $courseResponse = Http::retry(3, 100)->get(config('services.course.url') . "/api/courses/{$validated['id_course']}");
+                $courseResponse = Http::get("http://127.0.0.1:8001/api/courses/{$validated['id_course']}");
                 if ($courseResponse->failed()) {
                     return response()->json(['message' => 'Course tidak ditemukan'], 404);
                 }
@@ -279,26 +279,6 @@ class EnrollmentController extends Controller
             // Update enrollment
             $enrollment = Enrollment::findOrFail($id);
             $enrollment->update($validated);
-
-            // Simpan event jika id_student atau id_course berubah
-            if (isset($validated['id_student']) || isset($validated['id_course'])) {
-                \App\Models\Event::create([
-                    'name' => 'StudentEnrolled',
-                    'payload' => json_encode([
-                        'student_id' => $validated['id_student'] ?? $enrollment->id_student,
-                        'course_id' => $validated['id_course'] ?? $enrollment->id_course,
-                    ]),
-                    'status' => 'pending',
-                ]);
-
-                \App\Models\Event::create([
-                    'name' => 'CourseEnrollmentUpdated',
-                    'payload' => json_encode([
-                        'course_id' => $validated['id_course'] ?? $enrollment->id_course,
-                    ]),
-                    'status' => 'pending',
-                ]);
-            }
 
             return response()->json([
                 'message' => 'Enrollment berhasil diperbarui',
