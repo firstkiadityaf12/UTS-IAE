@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('book_requests', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('id_student');
-            $table->string('requester_name');
             $table->string('requested_title');
             $table->text('notes')->nullable();
             $table->enum('status', ['menunggu', 'disetujui', 'ditolak'])->default('menunggu');
