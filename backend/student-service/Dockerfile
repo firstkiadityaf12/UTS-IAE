@@ -1,14 +1,54 @@
-FROM php:8.1-fpm
+# student-service/Dockerfile
+FROM php:8.2-fpm-alpine
 
-RUN apt-get update && apt-get install -y \
-    git curl zip unzip libzip-dev \
-    && docker-php-ext-install pdo_mysql zip mysqli
+# Install system dependencies
+RUN apk add --no-cache \
+    curl \
+    git \
+    nodejs \
+    npm \
+    libpq-dev \
+    sqlite-dev \
+    libzip-dev \
+    imagemagick \
+    oniguruma-dev \
+    gd \
+    freetype-dev \
+    libpng-dev \
+    jpeg-dev
 
+# Install PHP extensions
+RUN docker-php-ext-install pdo pdo_pgsql bcmath exif pcntl opcache \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd
+
+# Clear cache
+RUN rm -rf /var/cache/apk/*
+
+# Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Set working directory
 WORKDIR /var/www/html
 
-COPY . /var/www/html
+# Copy application code
+COPY . .
 
-# Install Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# Install dependencies
+RUN composer install --no-dev --optimize-autoloader --no-scripts
 
-RUN composer install
+# Create .env file if it doesn't exist
+RUN if [ ! -f .env ]; then cp .env.example .env; fi
+
+# Generate application key
+RUN php artisan key:generate
+
+# Storage permissions
+RUN chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
+
+# Expose port
+EXPOSE 9000
+
+# Start PHP-FPM
+CMD ["php-fpm"]
