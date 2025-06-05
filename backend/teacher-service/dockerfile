@@ -34,8 +34,8 @@ WORKDIR /var/www/html
 # Copy application code
 COPY . .
 
-# Install dependencies
-RUN composer install --no-dev --optimize-autoloader --no-scripts
+# Install dependencies (HAPUS --no-dev)
+RUN composer install --optimize-autoloader --no-scripts
 
 # Create .env file if it doesn't exist
 RUN if [ ! -f .env ]; then cp .env.example .env; fi

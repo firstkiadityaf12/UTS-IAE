@@ -1,12 +1,15 @@
 # student-service/Dockerfile
 FROM php:8.2-fpm-alpine
 
+# ... (bagian FROM dan lainnya) ...
+
 # Install system dependencies
-RUN apk add --no-cache \
+# TAMBAHKAN baris ini:
+RUN apk update && \
+    apk add --no-cache \
     curl \
     git \
-    nodejs \
-    npm \
+    nginx \
     libpq-dev \
     sqlite-dev \
     libzip-dev \
@@ -16,6 +19,8 @@ RUN apk add --no-cache \
     freetype-dev \
     libpng-dev \
     jpeg-dev
+
+# ... (bagian selanjutnya) ...
 
 # Install PHP extensions
 RUN docker-php-ext-install pdo pdo_pgsql bcmath exif pcntl opcache \
@@ -34,8 +39,8 @@ WORKDIR /var/www/html
 # Copy application code
 COPY . .
 
-# Install dependencies
-RUN composer install --no-dev --optimize-autoloader --no-scripts
+# Install dependencies (HAPUS --no-dev)
+RUN composer install --optimize-autoloader --no-scripts
 
 # Create .env file if it doesn't exist
 RUN if [ ! -f .env ]; then cp .env.example .env; fi
