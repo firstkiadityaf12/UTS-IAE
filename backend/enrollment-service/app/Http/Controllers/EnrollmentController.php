@@ -128,25 +128,31 @@ class EnrollmentController extends Controller
 
         try {
             // Validasi id_student dari Student Service
-            $studentResponse = Http::get("http://127.0.0.1:8003/api/v1/users/{$validated['id_student']}");
+            $studentResponse = Http::get("http://127.0.0.1:8001/api/v1/users/{$validated['id_student']}");
             if ($studentResponse->failed()) {
+                echo($studentResponse);
+                res.json($studentResponse->json()['nama']);
                 return response()->json(['message' => 'Student tidak ditemukan'], 404);
             }
 
             // Validasi id_teacher dari Teacher Service
-            $teacherResponse = Http::get("http://127.0.0.1:8004/api/v1/teacher/{$validated['id_teacher']}");
+            $teacherResponse = Http::get("http://127.0.0.1:8002/api/v1/teacher/{$validated['id_teacher']}");
             if ($teacherResponse->failed()) {
+                echo($teacherResponse);
+                res.json($teacherResponse->json()['name']);
                 return response()->json(['message' => 'Teacher tidak ditemukan'], 404);
             }
 
             // Validasi id_course dari Course Service
-            $courseResponse = Http::get("http://127.0.0.1:8001/api/courses/{$validated['id_course']}");
+            $courseResponse = Http::get("http://127.0.0.1:8003/api/courses/{$validated['id_course']}");
             if ($courseResponse->failed()) {
+                echo($courseResponse);
                 return response()->json(['message' => 'Course tidak ditemukan'], 404);
             }
 
             // Simpan enrollment di database
             $enrollment = Enrollment::create($validated);
+            echo($validated);
 
             // Simpan enrollment di database
             $enrollment = Enrollment::create($validated);
@@ -263,7 +269,7 @@ class EnrollmentController extends Controller
             }
 
             if (isset($validated['id_teacher'])) {
-                $teacherResponse = Http::get("http://127.0.0.1:8004/api/v1/teacher/{$validated['id_teacher']}");
+                $teacherResponse = Http::retry(3, 100)->get(config('services.teacher.url') . "/api/v1/teacher/{$validated['id_teacher']}");
                 if ($teacherResponse->failed()) {
                     return response()->json(['message' => 'Teacher tidak ditemukan'], 404);
                 }

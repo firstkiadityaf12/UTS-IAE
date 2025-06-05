@@ -24,18 +24,6 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
-    'student' => [
-        'url' => env('STUDENT_SERVICE_URL', 'http://127.0.0.1:8001'),
-    ],
-
-    'teacher' => [
-        'url' => env('TEACHER_SERVICE_URL', 'http://127.0.0.1:8002'),
-    ],
-    
-    'course' => [
-        'url' => env('COURSE_SERVICE_URL', 'http://127.0.0.1:8003'),
-    ],
-
     'resend' => [
         'key' => env('RESEND_KEY'),
     ],
