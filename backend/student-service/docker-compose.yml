@@ -1,0 +1,37 @@
+services:
+    php:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: php_student
+        volumes:
+            - .:/var/www/html
+        depends_on:
+            - mysql
+
+    nginx:
+        image: nginx:latest
+        container_name: nginx_student
+        ports:
+            - "8080:80"
+        volumes:
+            - .:/var/www/html
+            - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+        depends_on:
+            - php
+
+    mysql:
+        image: mysql:8.0
+        container_name: mysql_student
+        ports:
+            - "3307:3306"
+        environment:
+            MYSQL_DATABASE: student_service
+            MYSQL_ROOT_PASSWORD: 123
+            MYSQL_PASSWORD: 123
+            MYSQL_USER: student
+        volumes:
+            - dbdata:/var/lib/mysql
+
+volumes:
+    dbdata:
