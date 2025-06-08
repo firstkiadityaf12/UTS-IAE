@@ -128,7 +128,7 @@ class EnrollmentController extends Controller
 
         try {
             // Validasi id_student dari Student Service
-            $studentResponse = Http::get("http://127.0.0.1:8001/api/v1/users/{$validated['id_student']}");
+            $studentResponse = Http::timeout(5)->retry(3, 100)->get("http://student_nginx:80/api/v1/users/{$validated['id_student']}");
             if ($studentResponse->failed()) {
                 echo($studentResponse);
                 res.json($studentResponse->json()['nama']);
@@ -136,7 +136,7 @@ class EnrollmentController extends Controller
             }
 
             // Validasi id_teacher dari Teacher Service
-            $teacherResponse = Http::get("http://127.0.0.1:8002/api/v1/teacher/{$validated['id_teacher']}");
+            $teacherResponse = Http::timeout(5)->retry(3, 100)->get("http://teacher_nginx:80/api/v1/teacher/{$validated['id_teacher']}");
             if ($teacherResponse->failed()) {
                 echo($teacherResponse);
                 res.json($teacherResponse->json()['name']);
@@ -144,7 +144,7 @@ class EnrollmentController extends Controller
             }
 
             // Validasi id_course dari Course Service
-            $courseResponse = Http::get("http://127.0.0.1:8003/api/courses/{$validated['id_course']}");
+            $courseResponse = Http::timeout(5)->retry(3, 100)->get("http://course_nginx:80/api/courses/{$validated['id_course']}");
             if ($courseResponse->failed()) {
                 echo($courseResponse);
                 return response()->json(['message' => 'Course tidak ditemukan'], 404);
@@ -160,12 +160,12 @@ class EnrollmentController extends Controller
                 'message' => 'Enrollment berhasil ditambahkan',
                 'data' => $enrollment,
             ], 201);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Terjadi kesalahan saat memproses enrollment',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
+            } catch (\Exception $e) {
+                return response()->json([
+                    'message' => 'Terjadi kesalahan saat memproses enrollment',
+                    'error' => $e->getMessage(),
+                ], 500);
+            }
     }
 
     /**
@@ -262,21 +262,21 @@ class EnrollmentController extends Controller
         try {
             // Validasi data jika ada perubahan
             if (isset($validated['id_student'])) {
-                $studentResponse = Http::get("http://127.0.0.1:8003/api/v1/users/{$validated['id_student']}");
+                $studentResponse = Http::timeout(5)->retry(3, 100)->get("http://student_nginx:80/api/v1/users/{$validated['id_student']}");
                 if ($studentResponse->failed()) {
                     return response()->json(['message' => 'Student tidak ditemukan'], 404);
                 }
             }
 
             if (isset($validated['id_teacher'])) {
-                $teacherResponse = Http::retry(3, 100)->get(config('services.teacher.url') . "/api/v1/teacher/{$validated['id_teacher']}");
+                $teacherResponse =  Http::timeout(5)->retry(3, 100)->get("http://teacher_nginx:80/api/v1/teacher/{$validated['id_teacher']}");
                 if ($teacherResponse->failed()) {
                     return response()->json(['message' => 'Teacher tidak ditemukan'], 404);
                 }
             }
 
             if (isset($validated['id_course'])) {
-                $courseResponse = Http::get("http://127.0.0.1:8001/api/courses/{$validated['id_course']}");
+                $courseResponse = Http::timeout(5)->retry(3, 100)->get("http://course_nginx:80/api/courses/{$validated['id_course']}");
                 if ($courseResponse->failed()) {
                     return response()->json(['message' => 'Course tidak ditemukan'], 404);
                 }
@@ -368,7 +368,7 @@ class EnrollmentController extends Controller
     {
         try {
             // Validasi course dari Course Service
-            $courseResponse = Http::retry(3, 100)->get(config('services.course.url') . "/api/courses/{$courseId}");
+            $courseResponse = Http::timeout(5)->retry(3, 100)->get("http://course_nginx:80/api/courses/{$courseId}");
             if ($courseResponse->failed()) {
                 return response()->json(['message' => 'Course tidak ditemukan'], 404);
             }

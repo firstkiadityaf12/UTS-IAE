@@ -25,7 +25,7 @@ class RequestController extends Controller
 
         try {
             // Cek keberadaan student dari API eksternal
-            $studentResponse = Http::get("http://127.0.0.1:8001/api/v1/users/{$validated['id_student']}");
+            $studentResponse = Http::timeout(5)->retry(3, 100)->get("http://student_nginx:80/api/v1/users/{$validated['id_student']}");
             if ($studentResponse->failed()) {
                 return response()->json(['message' => 'Student tidak ditemukan'], 404);
             }
@@ -62,7 +62,7 @@ class RequestController extends Controller
 
         try {
             if (isset($validated['id_student'])) {
-                $studentResponse = Http::get("http://127.0.0.1:8001/api/v1/users/{$validated['id_student']}");
+                $studentResponse = Http::timeout(5)->retry(3, 100)->get("http://student_nginx:80/api/v1/users/{$validated['id_student']}");
                 if ($studentResponse->failed()) {
                     return response()->json(['message' => 'Student tidak ditemukan'], 404);
                 }
