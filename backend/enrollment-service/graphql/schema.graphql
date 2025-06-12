@@ -1,0 +1,39 @@
+scalar DateTime
+@scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+
+type Enrollment {
+    id: ID!
+    id_student: Int!
+    id_teacher: Int!
+    id_course: Int!
+    status: String! @enum(values: ["enroll", "tidak"])
+    created_at: DateTime
+    updated_at: DateTime
+    deleted_at: DateTime
+}
+
+type Query {
+    enrollments: [Enrollment!]! @all(model: "App\\Models\\Enrollment")
+    enrollment(id: ID!): Enrollment @find(model: "App\\Models\\Enrollment")
+    enrollmentsByCourseId(courseId: ID!): [Enrollment!]! @field(resolver: "App\\Http\\Controllers\\EnrollmentController@getByCourseId")
+}
+
+type Mutation {
+    createEnrollment(
+        id_student: Int!
+        id_teacher: Int!
+        id_course: Int!
+        status: String! @enum(values: ["enroll", "tidak"])
+    ): Enrollment @field(resolver: "App\\Http\\Controllers\\EnrollmentController@store")
+
+    updateEnrollment(
+        id: ID!
+        id_student: Int
+        id_teacher: Int
+        id_course: Int
+        status: String @enum(values: ["enroll", "tidak"])
+    ): Enrollment @field(resolver: "App\\Http\\Controllers\\EnrollmentController@update")
+
+    deleteEnrollment(id: ID!): Enrollment @delete(model: "App\\Models\\Enrollment")
+}
