@@ -1,0 +1,85 @@
+# version: "3.8"
+
+networks:
+    iae_shared_network:
+        external: true
+
+services:
+    requestbook_nginx_proxy:
+        image: jwilder/nginx-proxy
+        container_name: requestbook_nginx_proxy
+        ports:
+            - "8083:80"
+        volumes:
+            - /var/run/docker.sock:/tmp/docker.sock:ro
+        networks:
+            - iae_shared_network
+
+    requestbook_web:
+        build:
+            context: ./
+            dockerfile: docker/dev/web.docker
+        container_name: requestbook_nginx
+        # ports:
+        #     - "8084:80"
+        volumes:
+            - ./:/var/www
+        depends_on:
+            - requestbook_app
+        environment:
+            - VIRTUAL_HOST=api.requestbook.test
+        networks:
+            - iae_shared_network
+
+    requestbook_app:
+        build:
+            context: ./
+            dockerfile: docker/dev/app.docker
+        container_name: requestbook_app
+        volumes:
+            - ./:/var/www
+        depends_on:
+            - requestbook_db
+            - requestbook_cache
+        environment:
+            - REDIS_PORT=6379
+            - REDIS_HOST=requestbook_cache
+        networks:
+            - iae_shared_network
+
+    requestbook_db:
+        image: mysql:8.2
+        container_name: requestbook_db
+        environment:
+            - MYSQL_ROOT_PASSWORD=123
+            - MYSQL_DATABASE=db_requestbook
+        ports:
+            - "33064:3306"
+        volumes:
+            - requestbook_data:/var/lib/mysql
+        networks:
+            - iae_shared_network
+
+    requestbook_phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        container_name: requestbook_phpmyadmin
+        depends_on:
+            - requestbook_db
+        environment:
+            - PMA_HOST=requestbook_db
+            - PMA_USER=root
+            - PMA_PASSWORD=123
+            - VIRTUAL_HOST=pma.requestbook.test
+        networks:
+            - iae_shared_network
+
+    requestbook_cache:
+        image: redis:3.0
+        container_name: requestbook_cache
+        ports:
+            - "63792:6379"
+        networks:
+            - iae_shared_network
+
+volumes:
+    requestbook_data:

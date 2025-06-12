@@ -1,0 +1,85 @@
+# version: "3.8"
+
+networks:
+  iae_shared_network:
+    external: true
+
+services:
+    teacher_nginx_proxy:
+        image: jwilder/nginx-proxy
+        container_name: teacher_nginx_proxy
+        ports:
+            - "8086:80"
+        volumes:
+            - /var/run/docker.sock:/tmp/docker.sock:ro
+        networks:
+            - iae_shared_network
+
+    teacher_web:
+        build:
+            context: ./
+            dockerfile: docker/dev/web.docker
+        container_name: teacher_nginx
+        # ports:
+        #     - "8084:80"
+        volumes:
+            - ./:/var/www
+        depends_on:
+            - teacher_app
+        environment:
+            - VIRTUAL_HOST=api.teacher.test
+        networks:
+            - iae_shared_network
+
+    teacher_app:
+        build:
+            context: ./
+            dockerfile: docker/dev/app.docker
+        container_name: teacher_app
+        volumes:
+            - ./:/var/www
+        depends_on:
+            - teacher_db
+            - teacher_cache
+        environment:
+            - REDIS_PORT=6379
+            - REDIS_HOST=teacher_cache
+        networks:
+            - iae_shared_network
+
+    teacher_db:
+        image: mysql:8.2
+        container_name: db_teacher
+        environment:
+            - MYSQL_ROOT_PASSWORD=123
+            - MYSQL_DATABASE=db_teacher
+        ports:
+            - "33065:3306"
+        volumes:
+            - teacher_data:/var/lib/mysql
+        networks:
+            - iae_shared_network
+
+    teacher_phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        container_name: teacher_phpmyadmin
+        depends_on:
+            - teacher_db
+        environment:
+            - PMA_HOST=teacher_db
+            - PMA_USER=root
+            - PMA_PASSWORD=123
+            - VIRTUAL_HOST=pma.teacher.test
+        networks:
+            - iae_shared_network
+
+    teacher_cache:
+        image: redis:3.0
+        container_name: teacher_cache
+        ports:
+            - "63794:6379"
+        networks:
+            - iae_shared_network
+
+volumes:
+    teacher_data:

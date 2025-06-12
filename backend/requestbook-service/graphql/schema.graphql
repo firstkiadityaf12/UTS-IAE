@@ -1,0 +1,37 @@
+scalar DateTime
+    @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+type RequestBook {
+    id: ID!
+    id_student: Int!
+    requested_title: String!
+    notes: String!
+    status: String! # enum: menunggu, disetujui, ditolak
+    created_at: DateTime
+    updated_at: DateTime
+}
+
+type Query {
+    requestbooks: [RequestBook!]! @all(model: "App\\Models\\RequestBook")
+    requestbook(id: ID!): RequestBook @find(model: "App\\Models\\RequestBook")
+}
+
+type Mutation {
+    createRequestBook(
+        id_student: Int!
+        requested_title: String!
+        notes: String!
+        status: String! # validasi tetap dijalankan di controller
+    ): RequestBook @create(model: "App\\Models\\RequestBook")
+
+    updateRequestBook(
+        id: ID!
+        id_student: Int
+        requested_title: String
+        notes: String
+        status: String
+    ): RequestBook @update(model: "App\\Models\\RequestBook")
+
+    deleteRequestBook(id: ID!): RequestBook
+        @delete(model: "App\\Models\\RequestBook")
+}
