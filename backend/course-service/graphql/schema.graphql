@@ -1,0 +1,149 @@
+"A datetime string with format `Y-m-d H:i:s`, e.g. `2018-05-23 13:43:32`."
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+"A date string with format `Y-m-d`, e.g. `2018-05-23`."
+scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
+
+"Indicates what fields are available at the top level of a query operation."
+type Query {
+    "Find a single course by an identifying attribute."
+    course(
+      "Search by primary key."
+      id_course: ID @eq @rules(apply: ["prohibits:nama_course", "required_without:nama_course"])
+      
+      "Search by course name."
+      nama_course: String @eq @rules(apply: ["prohibits:id_course", "required_without:id_course"])
+    ): Course @find
+
+    "List multiple courses with optional filtering."
+    courses(
+      "Filters by course name. Accepts SQL LIKE wildcards `%` and `_`."
+      nama_course: String @where(operator: "like")
+      
+      "Filters by category/field."
+      kat_bidang: String @where(operator: "like")
+      
+      "Filters by start date."
+      tgl_mulai: Date @where(operator: ">=")
+      
+      "Filters by end date."
+      tgl_selesai: Date @where(operator: "<=")
+      
+      "Filters by minimum capacity."
+      kapasitas: Int @where(operator: ">=")
+    ): [Course!]! @paginate(defaultCount: 10)
+    
+    "Search courses by name or description."
+    searchCourses(
+      "Search term for course name or description."
+      search: String! @where(operator: "like")
+    ): [Course!]! @paginate(defaultCount: 10)
+    
+    "Get courses by category/field."
+    coursesByCategory(
+      "Category/field to filter by."
+      kat_bidang: String!
+    ): [Course!]! @paginate(defaultCount: 10)
+    
+    "Get upcoming courses (start date >= today)."
+    upcomingCourses: [Course!]! @paginate(defaultCount: 10)
+    
+    "Get active courses (current date between start and end date)."
+    activeCourses: [Course!]! @paginate(defaultCount: 10)
+}
+
+"Indicates what fields are available at the top level of a mutation operation."
+type Mutation {
+    "Create a new course."
+    createCourse(
+      "Course name."
+      nama_course: String! @rules(apply: ["required", "string", "max:255"])
+      
+      "Course description."
+      deskripsi: String! @rules(apply: ["required", "string"])
+      
+      "Start date of the course."
+      tgl_mulai: Date! @rules(apply: ["required", "date"])
+      
+      "End date of the course."
+      tgl_selesai: Date! @rules(apply: ["required", "date", "after:tgl_mulai"])
+      
+      "Category/field of the course."
+      kat_bidang: String! @rules(apply: ["required", "string", "max:255"])
+      
+      "Course capacity."
+      kapasitas: Int! @rules(apply: ["required", "integer", "min:1"])
+    ): Course! @create
+    
+    "Update an existing course."
+    updateCourse(
+      "Course ID to update."
+      id_course: ID! @rules(apply: ["required", "exists:courses,id_course"])
+      
+      "Course name."
+      nama_course: String @rules(apply: ["string", "max:255"])
+      
+      "Course description."
+      deskripsi: String @rules(apply: ["string"])
+      
+      "Start date of the course."
+      tgl_mulai: Date @rules(apply: ["date"])
+      
+      "End date of the course."
+      tgl_selesai: Date @rules(apply: ["date", "after:tgl_mulai"])
+      
+      "Category/field of the course."
+      kat_bidang: String @rules(apply: ["string", "max:255"])
+      
+      "Course capacity."
+      kapasitas: Int @rules(apply: ["integer", "min:1"])
+    ): Course! @update
+    
+    "Delete a course."
+    deleteCourse(
+      "Course ID to delete."
+      id_course: ID! @rules(apply: ["required", "exists:courses,id_course"])
+    ): Course! @delete
+}
+
+"Course entity representing a training or educational course."
+type Course {
+    "Unique primary key."
+    id_course: ID!
+    
+    "Course name."
+    nama_course: String!
+    
+    "Course description."
+    deskripsi: String!
+    
+    "Start date of the course."
+    tgl_mulai: Date!
+    
+    "End date of the course."
+    tgl_selesai: Date!
+    
+    "Category/field of the course."
+    kat_bidang: String!
+    
+    "Course capacity (maximum number of participants)."
+    kapasitas: Int!
+    
+    "When the course was created."
+    created_at: DateTime!
+    
+    "When the course was last updated."
+    updated_at: DateTime!
+    
+    "Computed field: Course duration in days."
+    duration_days: Int!
+    
+    "Computed field: Whether the course is currently active."
+    is_active: Boolean!
+    
+    "Computed field: Whether the course is upcoming."
+    is_upcoming: Boolean!
+    
+    "Computed field: Whether the course has ended."
+    is_ended: Boolean!
+}
