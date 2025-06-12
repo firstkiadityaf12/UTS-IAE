@@ -1,0 +1,42 @@
+scalar DateTime
+    @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+type User {
+    id: ID!
+    nama: String!
+    gmail: String!
+    no_telp: String!
+    alamat: String!
+    username: String!
+    password: String!
+    created_at: DateTime
+    updated_at: DateTime
+}
+
+type Query {
+    users: [User!]! @all(model: "App\\Models\\User")
+    user(id: ID!): User @find(model: "App\\Models\\User")
+}
+
+type Mutation {
+    createUser(
+        nama: String!
+        gmail: String!
+        no_telp: String!
+        alamat: String!
+        username: String!
+        password: String!
+    ): User @create(model: "App\\Models\\User")
+
+    updateUser(
+        id: ID!
+        nama: String
+        gmail: String
+        no_telp: String
+        alamat: String
+        username: String
+        password: String
+    ): User @update(model: "App\\Models\\User")
+
+    deleteUser(id: ID!): User @delete(model: "App\\Models\\User")
+}
