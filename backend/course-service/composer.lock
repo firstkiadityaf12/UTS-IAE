@@ -4,11 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-<<<<<<< HEAD
+
     "content-hash": "edc3697ff52a2223855bb81afc84af5c",
-=======
-    "content-hash": "50482f4d7fff81feb05d66952753ce1e",
->>>>>>> 12256a75acfd535a862ef57d4a51635e6dc73df6
     "packages": [
         {
             "name": "brick/math",
@@ -1216,7 +1213,6 @@
             "time": "2025-02-03T10:55:03+00:00"
         },
         {
-<<<<<<< HEAD
             "name": "haydenpierce/class-finder",
             "version": "0.5.3",
             "source": {
@@ -1258,6 +1254,7 @@
             "description": "A library that can provide of a list of classes in a given namespace",
             "time": "2023-06-18T17:43:01+00:00"
         },
+
         {
             "name": "laragraph/utils",
             "version": "v2.2.0",
@@ -1273,7 +1270,7 @@
                 "shasum": ""
             },
             "require": {
-=======
+
             "name": "laragraph/utils",
             "version": "v2.2.0",
             "source": {
@@ -1288,7 +1285,6 @@
                 "shasum": ""
             },
             "require": {
->>>>>>> 12256a75acfd535a862ef57d4a51635e6dc73df6
                 "illuminate/contracts": "~5.6.0 || ~5.7.0 || ~5.8.0 || ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12",
                 "illuminate/http": "~5.6.0 || ~5.7.0 || ~5.8.0 || ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12",
                 "php": "^7.2 || ^8",
@@ -3862,7 +3858,6 @@
             "time": "2025-06-01T06:28:46+00:00"
         },
         {
-<<<<<<< HEAD
             "name": "swagger-api/swagger-ui",
             "version": "v5.24.0",
             "source": {
@@ -3872,7 +3867,6 @@
             },
             "dist": {
                 "type": "zip",
-=======
             "name": "rebing/graphql-laravel",
             "version": "9.10.0",
             "source": {
@@ -3992,7 +3986,6 @@
             },
             "dist": {
                 "type": "zip",
->>>>>>> 12256a75acfd535a862ef57d4a51635e6dc73df6
                 "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/4680916cd91d4c9e7caabef0a1c677e2ab011118",
                 "reference": "4680916cd91d4c9e7caabef0a1c677e2ab011118",
                 "shasum": ""
