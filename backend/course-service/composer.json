@@ -12,7 +12,11 @@
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",
         "mll-lab/laravel-graphiql": "^4.0",
+<<<<<<< HEAD
         "nuwave/lighthouse": "^6.58"
+=======
+        "rebing/graphql-laravel": "^9.10"
+>>>>>>> 12256a75acfd535a862ef57d4a51635e6dc73df6
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

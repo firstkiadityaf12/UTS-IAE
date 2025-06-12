@@ -4,7 +4,11 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
+<<<<<<< HEAD
     "content-hash": "edc3697ff52a2223855bb81afc84af5c",
+=======
+    "content-hash": "50482f4d7fff81feb05d66952753ce1e",
+>>>>>>> 12256a75acfd535a862ef57d4a51635e6dc73df6
     "packages": [
         {
             "name": "brick/math",
@@ -1212,6 +1216,7 @@
             "time": "2025-02-03T10:55:03+00:00"
         },
         {
+<<<<<<< HEAD
             "name": "haydenpierce/class-finder",
             "version": "0.5.3",
             "source": {
@@ -1268,6 +1273,22 @@
                 "shasum": ""
             },
             "require": {
+=======
+            "name": "laragraph/utils",
+            "version": "v2.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laragraph/utils.git",
+                "reference": "035c92b37f40c6b51027e76f90ef25d9a9458c56"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laragraph/utils/zipball/035c92b37f40c6b51027e76f90ef25d9a9458c56",
+                "reference": "035c92b37f40c6b51027e76f90ef25d9a9458c56",
+                "shasum": ""
+            },
+            "require": {
+>>>>>>> 12256a75acfd535a862ef57d4a51635e6dc73df6
                 "illuminate/contracts": "~5.6.0 || ~5.7.0 || ~5.8.0 || ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12",
                 "illuminate/http": "~5.6.0 || ~5.7.0 || ~5.8.0 || ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12",
                 "php": "^7.2 || ^8",
@@ -3841,6 +3862,7 @@
             "time": "2025-06-01T06:28:46+00:00"
         },
         {
+<<<<<<< HEAD
             "name": "swagger-api/swagger-ui",
             "version": "v5.24.0",
             "source": {
@@ -3850,6 +3872,127 @@
             },
             "dist": {
                 "type": "zip",
+=======
+            "name": "rebing/graphql-laravel",
+            "version": "9.10.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rebing/graphql-laravel.git",
+                "reference": "f89d557ff13f52e513d6ebb08fdb471c78deee3b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rebing/graphql-laravel/zipball/f89d557ff13f52e513d6ebb08fdb471c78deee3b",
+                "reference": "f89d557ff13f52e513d6ebb08fdb471c78deee3b",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "illuminate/contracts": "^11.0 || ^12.0",
+                "illuminate/support": "^11.0 || ^12.0",
+                "laragraph/utils": "^2.0.1",
+                "php": "^8.2",
+                "thecodingmachine/safe": "^3.0",
+                "webonyx/graphql-php": "^15.0.3"
+            },
+            "require-dev": {
+                "ext-pdo_sqlite": "*",
+                "fakerphp/faker": "^1.6",
+                "friendsofphp/php-cs-fixer": "^3",
+                "larastan/larastan": "^3",
+                "laravel/framework": "^11.0 || ^12.0",
+                "mfn/php-cs-fixer-config": "^2",
+                "mockery/mockery": "^1.5",
+                "orchestra/testbench": "^9.0 || ^10.0",
+                "phpstan/phpstan": "^2",
+                "phpunit/phpunit": "^10.5.32 || ^11.0",
+                "thecodingmachine/phpstan-safe-rule": "^1"
+            },
+            "suggest": {
+                "mll-lab/laravel-graphiql": "Easily integrate GraphiQL into your Laravel projects. "
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "GraphQL": "Rebing\\GraphQL\\Support\\Facades\\GraphQL"
+                    },
+                    "providers": [
+                        "Rebing\\GraphQL\\GraphQLServiceProvider"
+                    ]
+                },
+                "branch-alias": {
+                    "dev-master": "9.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Rebing\\GraphQL\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Rebing OÜ",
+                    "homepage": "http://www.rebing.ee",
+                    "role": "Company"
+                },
+                {
+                    "name": "Mikk Mihkel Nurges",
+                    "email": "mikk.nurges@rebing.ee",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Folklore",
+                    "email": "info@atelierfolklore.ca",
+                    "homepage": "http://atelierfolklore.ca"
+                },
+                {
+                    "name": "David Mongeau-Petitpas",
+                    "email": "dmp@atelierfolklore.ca",
+                    "homepage": "http://mongo.ca",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Markus Podar",
+                    "email": "markus@fischer.name",
+                    "homepage": "https://github.com/mfn",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Laravel wrapper for PHP GraphQL",
+            "keywords": [
+                "framework",
+                "graphql",
+                "laravel",
+                "react"
+            ],
+            "support": {
+                "issues": "https://github.com/rebing/graphql-laravel/issues",
+                "source": "https://github.com/rebing/graphql-laravel/tree/9.10.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/mfn",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-05-17T15:27:18+00:00"
+        },
+        {
+            "name": "swagger-api/swagger-ui",
+            "version": "v5.24.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/swagger-api/swagger-ui.git",
+                "reference": "4680916cd91d4c9e7caabef0a1c677e2ab011118"
+            },
+            "dist": {
+                "type": "zip",
+>>>>>>> 12256a75acfd535a862ef57d4a51635e6dc73df6
                 "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/4680916cd91d4c9e7caabef0a1c677e2ab011118",
                 "reference": "4680916cd91d4c9e7caabef0a1c677e2ab011118",
                 "shasum": ""

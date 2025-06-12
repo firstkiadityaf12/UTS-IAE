@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Validator;
  *     version="1.0.0",
  *     description="API Documentation for Teacher Microservice"
  * )
- * 
+ *
  * @OA\Schema(
  *     schema="Teacher",
  *     required={"nip", "name", "email", "gender", "expertise"},
