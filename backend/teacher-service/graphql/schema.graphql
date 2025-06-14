@@ -1,0 +1,62 @@
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+"Query root"
+type Query {
+  "Get list of all teachers (paginated)"
+  teachers(
+    name: String @where(operator: "like")
+  ): [Teacher!]! @paginate(defaultCount: 10)
+
+  "Get one teacher by ID"
+  teacher(id: ID!): Teacher @find
+}
+
+"Mutation root"
+type Mutation {
+  "Create a new teacher"
+  createTeacher(
+    nip: String!
+    name: String!
+    email: String!
+    phone: String
+    address: String
+    gender: Gender!
+    expertise: String!
+  ): Teacher @create
+
+  "Update an existing teacher"
+  updateTeacher(
+    id: ID!
+    nip: String
+    name: String
+    email: String
+    phone: String
+    address: String
+    gender: Gender
+    expertise: String
+  ): Teacher @update
+
+  "Delete a teacher"
+  deleteTeacher(id: ID!): Teacher @delete(arg: "id")
+}
+
+"Teacher model"
+type Teacher {
+  id: ID!
+  nip: String!
+  name: String!
+  email: String!
+  phone: String
+  address: String
+  gender: Gender!
+  expertise: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  deleted_at: DateTime
+}
+
+"Enum for gender"
+enum Gender {
+  male
+  female
+}

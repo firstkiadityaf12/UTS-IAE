@@ -3,7 +3,9 @@
 use Illuminate\Http\Request;
 use App\Http\Controllers\TeacherController;
 use Illuminate\Support\Facades\Route;
-use MLL\GraphQLPlayground\GraphQLPlaygroundController;
+use Nuwave\Lighthouse\Support\Facades\GraphQL;
+
+Route::post('/graphql', [\Nuwave\Lighthouse\Support\Http\Controllers\GraphQLController::class, 'query']);
 
 Route::get('/teacher', function () {
     return response()->json(['message' => 'API is working']);

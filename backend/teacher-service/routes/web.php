@@ -2,7 +2,11 @@
 
 use App\Http\Controllers\TeacherController;
 use Illuminate\Support\Facades\Route;
-use MLL\GraphQLPlayground\GraphQLPlaygroundController;
+// use Nuwave\Lighthouse\Support\Http\Controllers\GraphQLController;
+
+// Route::view('/graphql', 'graphql-playground'); // UI tampilan
+// Route::post('/graphql', [GraphQLController::class, 'query']); // untuk query dari playground
+
 
 Route::get('/teachers', [TeacherController::class, 'index']);
 Route::post('/teachers', [TeacherController::class, 'store']);
