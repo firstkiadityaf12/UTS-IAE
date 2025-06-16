@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Buku;
+use App\Models\Book;
 use Illuminate\Http\Request;
 
 class BukuController extends Controller
@@ -14,7 +14,7 @@ class BukuController extends Controller
      */
     public function index()
     {
-        $buku = Buku::all();
+        $buku = Book::all();
         return response()->json($buku, 200);
     }
 
@@ -33,7 +33,7 @@ class BukuController extends Controller
             'tahun_terbit_buku' => 'required|integer|between:1900,2100',
         ]);
 
-        $buku = Buku::create($validated);
+        $buku = Book::create($validated);
         return response()->json([
             'message' => 'Buku berhasil ditambahkan',
             'data' => $buku
@@ -48,7 +48,7 @@ class BukuController extends Controller
      */
     public function show($id)
     {
-        $buku = Buku::find($id);
+        $buku = Book::find($id);
 
         if (!$buku) {
             return response()->json(['message' => 'Buku tidak ditemukan'], 404);
@@ -66,7 +66,7 @@ class BukuController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $buku = Buku::find($id);
+        $buku = Book::find($id);
 
         if (!$buku) {
             return response()->json(['message' => 'Buku tidak ditemukan'], 404);
@@ -94,7 +94,7 @@ class BukuController extends Controller
      */
     public function destroy($id)
     {
-        $buku = Buku::find($id);
+        $buku = Book::find($id);
 
         if (!$buku) {
             return response()->json(['message' => 'Buku tidak ditemukan'], 404);

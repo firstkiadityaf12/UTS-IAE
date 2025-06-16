@@ -1,0 +1,42 @@
+type Query {
+    books: [Book!]! @all
+    book(id: ID! @eq): Book @find
+    searchBooks(title: String @where(operator: "like")): [Book!]! @paginate
+}
+
+type Mutation {
+    createBook(
+        title: String! @rules(apply: ["required", "max:255"])
+        author: String! @rules(apply: ["required", "max:255"])
+        description: String @rules(apply: ["max:1000"])
+        isbn: String! @rules(apply: ["required", "unique:books,isbn"])
+        published_year: Int! @rules(apply: ["required", "min:1900", "max:2024"])
+        price: Float! @rules(apply: ["required", "min:0"])
+    ): Book! @create
+
+    updateBook(
+        id: ID!
+        title: String @rules(apply: ["max:255"])
+        author: String @rules(apply: ["max:255"])
+        description: String @rules(apply: ["max:1000"])
+        isbn: String @rules(apply: ["unique:books,isbn"])
+        published_year: Int @rules(apply: ["min:1900", "max:2024"])
+        price: Float @rules(apply: ["min:0"])
+    ): Book! @update
+
+    deleteBook(id: ID!): Book! @delete
+}
+
+type Book {
+    id: ID!
+    title: String!
+    author: String!
+    description: String
+    isbn: String!
+    published_year: Int!
+    price: Float!
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
