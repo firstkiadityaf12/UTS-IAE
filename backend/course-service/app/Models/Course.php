@@ -31,9 +31,20 @@ class Course extends Model
         'updated_at'
     ];
 
-    /**
-     * Get the duration of the course in days
-     */
+    protected $casts = [
+        'tgl_mulai' => 'datetime',
+        'tgl_selesai' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime'
+    ];
+
+    protected $appends = [
+        'duration_days',
+        'is_active',
+        'is_upcoming',
+        'is_ended',
+    ];
+
     public function getDurationDaysAttribute()
     {
         if ($this->tgl_mulai && $this->tgl_selesai) {
@@ -42,9 +53,6 @@ class Course extends Model
         return 0;
     }
 
-    /**
-     * Check if the course is currently active
-     */
     public function getIsActiveAttribute()
     {
         $now = Carbon::now();
@@ -52,21 +60,15 @@ class Course extends Model
                $now->between($this->tgl_mulai, $this->tgl_selesai);
     }
 
-    /**
-     * Check if the course is upcoming (hasn't started yet)
-     */
     public function getIsUpcomingAttribute()
     {
         $now = Carbon::now();
         return $this->tgl_mulai && $now->lt($this->tgl_mulai);
     }
 
-    /**
-     * Check if the course has ended
-     */
     public function getIsEndedAttribute()
     {
         $now = Carbon::now();
         return $this->tgl_selesai && $now->gt($this->tgl_selesai);
     }
-} 
+}
