@@ -9,7 +9,7 @@ services:
         image: jwilder/nginx-proxy
         container_name: buku_nginx_proxy
         ports:
-            - "8081:80"
+            - "8089:80"
         volumes:
             - /var/run/docker.sock:/tmp/docker.sock:ro
         networks:
