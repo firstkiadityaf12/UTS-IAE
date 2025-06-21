@@ -9,7 +9,7 @@ services:
         image: jwilder/nginx-proxy
         container_name: buku_nginx_proxy
         ports:
-            - "8089:80"
+            - "8085:80"
         volumes:
             - /var/run/docker.sock:/tmp/docker.sock:ro
         networks:
@@ -54,7 +54,7 @@ services:
             - MYSQL_ROOT_PASSWORD=123
             - MYSQL_DATABASE=db_buku
         ports:
-            - "33061:3306"
+            - "33062:3306"
         volumes:
             - buku_data:/var/lib/mysql
         networks:
@@ -64,9 +64,9 @@ services:
         image: redis:latest
         container_name: buku_cache
         ports:
-            - "63791:6379"
+            - "63795:6379"
         networks:
-            - iae_shared_network
+            - iae_shared_network                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 
     buku_phpmyadmin:
         image: phpmyadmin/phpmyadmin

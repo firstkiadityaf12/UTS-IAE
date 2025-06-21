@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Book;
+use App\Models\Buku;
 use Illuminate\Http\Request;
 
 class BukuController extends Controller
@@ -14,7 +14,7 @@ class BukuController extends Controller
      */
     public function index()
     {
-        $buku = Book::all();
+        $buku = Buku::all();
         return response()->json($buku, 200);
     }
 
@@ -27,22 +27,18 @@ class BukuController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'author' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'isbn' => 'nullable|string|max:20',
-            'published_year' => 'required|integer|between:1900,2100',
-            'price' => 'required|numeric|min:0',
+            'judul_buku' => 'required|string|max:255',
+            'penulis_buku' => 'required|string|max:255',
+            'penerbit_buku' => 'required|string|max:255',
+            'tahun_terbit_buku' => 'required|integer|between:1900,2100',
         ]);
 
-        $buku = Book::create($validated);
-
+        $buku = Buku::create($validated);
         return response()->json([
             'message' => 'Buku berhasil ditambahkan',
             'data' => $buku
         ], 201);
     }
-
 
     /**
      * Menampilkan detail buku berdasarkan ID.
@@ -52,7 +48,7 @@ class BukuController extends Controller
      */
     public function show($id)
     {
-        $buku = Book::find($id);
+        $buku = Buku::find($id);
 
         if (!$buku) {
             return response()->json(['message' => 'Buku tidak ditemukan'], 404);
@@ -70,29 +66,25 @@ class BukuController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $buku = Book::find($id);
+        $buku = Buku::find($id);
 
         if (!$buku) {
             return response()->json(['message' => 'Buku tidak ditemukan'], 404);
         }
 
         $validated = $request->validate([
-            'title' => 'sometimes|required|string|max:255',
-            'author' => 'sometimes|required|string|max:255',
-            'description' => 'sometimes|nullable|string',
-            'isbn' => 'sometimes|nullable|string|max:20',
-            'published_year' => 'sometimes|required|integer|between:1900,2100',
-            'price' => 'sometimes|required|numeric|min:0',
+            'judul_buku' => 'sometimes|required|string|max:255',
+            'penulis_buku' => 'sometimes|required|string|max:255',
+            'penerbit_buku' => 'sometimes|required|string|max:255',
+            'tahun_terbit_buku' => 'sometimes|required|integer|between:1900,2100',
         ]);
 
         $buku->update($validated);
-
         return response()->json([
             'message' => 'Buku berhasil diperbarui',
             'data' => $buku
         ], 200);
     }
-
 
     /**
      * Menghapus buku berdasarkan ID.
@@ -102,7 +94,7 @@ class BukuController extends Controller
      */
     public function destroy($id)
     {
-        $buku = Book::find($id);
+        $buku = Buku::find($id);
 
         if (!$buku) {
             return response()->json(['message' => 'Buku tidak ditemukan'], 404);
@@ -111,21 +103,4 @@ class BukuController extends Controller
         $buku->delete();
         return response()->json(['message' => 'Buku berhasil dihapus'], 200);
     }
-
-    public function listByStudent(Request $request)
-    {
-        $studentId = $request->query('student_id');
-
-        // Panggil enrollment-service untuk cek apakah student sudah enroll
-        $response = Http::get("http://enrollment_app/api/check-enrollment", [
-            'student_id' => $studentId
-        ]);
-
-        if ($response->ok() && $response->json('enrolled')) {
-            return response()->json(Book::all(), 200);
-        }
-
-        return response()->json(['message' => 'Anda belum terdaftar dalam kursus apa pun'], 403);
-    }
-
 }
